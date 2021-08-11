@@ -1,10 +1,9 @@
-import copy
-import math
 import time
 from typing import List
 import random
 import numpy as np
 import myModel
+import plot
 
 
 class SearchStrategy(object):
@@ -20,7 +19,7 @@ class SearchStrategy(object):
         self.select = 0.8
         self.factor = 0.8
         self.pop = [myModel.myModel([random.random() * (self.upper - self.lower) + self.lower
-                             for i in range(self.variableNum)]) for j in range(self.popNum)]
+                                     for i in range(self.variableNum)]) for j in range(self.popNum)]
         self.best = self.pop[np.argsort([self.pop[i].fitness for i in range(self.popNum)])[0]]
 
     def generate_tasks(self):
@@ -83,8 +82,11 @@ class SearchStrategy(object):
 if __name__ == '__main__':
     a = SearchStrategy()
     epochs = 200
+    p = plot.plot(myModel.object(), a.lower, a.upper, 200)
+
     for i in range(epochs):
         random.seed(time.time())
         a.generate_tasks()
         a.handle_rewards([])
+        p.point(np.array([j.gene[0] for j in a.pop]), np.array([j.gene[1] for j in a.pop]))
         print(a.best.gene, a.best.fitness)
